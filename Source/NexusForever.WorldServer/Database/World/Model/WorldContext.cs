@@ -1,9 +1,6 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using NexusForever.Shared;
-using NexusForever.Shared.Configuration;
-using NexusForever.Shared.Database;
 
 namespace NexusForever.WorldServer.Database.World.Model
 {
@@ -25,18 +22,21 @@ namespace NexusForever.WorldServer.Database.World.Model
         public virtual DbSet<EntityVendor> EntityVendor { get; set; }
         public virtual DbSet<EntityVendorCategory> EntityVendorCategory { get; set; }
         public virtual DbSet<EntityVendorItem> EntityVendorItem { get; set; }
-        public virtual DbSet<Tutorial> Tutorial { get; set; }
         public virtual DbSet<StoreCategory> StoreCategory { get; set; }
         public virtual DbSet<StoreOfferGroup> StoreOfferGroup { get; set; }
         public virtual DbSet<StoreOfferGroupCategory> StoreOfferGroupCategory { get; set; }
         public virtual DbSet<StoreOfferItem> StoreOfferItem { get; set; }
         public virtual DbSet<StoreOfferItemData> StoreOfferItemData { get; set; }
         public virtual DbSet<StoreOfferItemPrice> StoreOfferItemPrice { get; set; }
+        public virtual DbSet<Tutorial> Tutorial { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-                optionsBuilder.UseConfiguration(DatabaseManager.Config, DatabaseType.World);
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySql("server=localhost;port=3306;user=nexusforever;password=nexusforever;database=nexus_forever_world");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

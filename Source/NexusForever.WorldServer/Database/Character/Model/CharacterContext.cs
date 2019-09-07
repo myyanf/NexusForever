@@ -946,6 +946,10 @@ namespace NexusForever.WorldServer.Database.Character.Model
                     .HasColumnName("groundWallpaperId")
                     .HasDefaultValueSql("'0'");
 
+                entity.Property(e => e.MusicId)
+                    .HasColumnName("musicId")
+                    .HasDefaultValueSql("'0'");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("name")
@@ -1030,6 +1034,10 @@ namespace NexusForever.WorldServer.Database.Character.Model
 
                 entity.Property(e => e.Scale)
                     .HasColumnName("scale")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.DecorParentId)
+                    .HasColumnName("decorParentId")
                     .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.ColourShiftId)

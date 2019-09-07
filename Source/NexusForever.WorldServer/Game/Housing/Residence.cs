@@ -123,6 +123,29 @@ namespace NexusForever.WorldServer.Game.Housing
             }
         }
 
+        public ushort Music
+        {
+            get => musicId;
+            set
+            {
+                
+
+                HousingWallpaperInfoEntry entry = GameTableManager.HousingWallpaperInfo.GetEntry(value);
+                if (entry == null)
+                    throw new ArgumentOutOfRangeException();
+
+                if ((entry.Flags & 0x100) == 0)
+                    throw new ArgumentOutOfRangeException();
+
+
+                musicId = value;
+                
+                saveMask |= ResidenceSaveMask.Music;
+            }
+        }
+
+        private ushort musicId;
+
         private ushort groundWallpaperId;
 
         public ushort Sky
@@ -138,7 +161,7 @@ namespace NexusForever.WorldServer.Game.Housing
                     throw new ArgumentOutOfRangeException();
 
                 skyWallpaperId = value;
-                saveMask |= ResidenceSaveMask.Ground;
+                saveMask |= ResidenceSaveMask.Sky;
             }
         }
 
@@ -202,6 +225,7 @@ namespace NexusForever.WorldServer.Game.Housing
             entrywayDecorInfoId = model.EntrywayDecorInfoId;
             doorDecorInfoId     = model.DoorDecorInfoId;
             groundWallpaperId   = model.GroundWallpaperId;
+            musicId             = model.MusicId;
             skyWallpaperId      = model.SkyWallpaperId;
             flags               = (ResidenceFlags)model.Flags;
             resourceSharing     = model.ResourceSharing;
@@ -266,6 +290,7 @@ namespace NexusForever.WorldServer.Game.Housing
                         EntrywayDecorInfoId = entrywayDecorInfoId,
                         DoorDecorInfoId     = doorDecorInfoId,
                         GroundWallpaperId   = groundWallpaperId,
+                        MusicId             = musicId,
                         SkyWallpaperId      = skyWallpaperId,
                         Flags               = (ushort)flags,
                         ResourceSharing     = resourceSharing,
@@ -318,6 +343,11 @@ namespace NexusForever.WorldServer.Game.Housing
                     {
                         model.GroundWallpaperId = Ground;
                         entity.Property(p => p.GroundWallpaperId).IsModified = true;
+                    }
+                    if ((saveMask & ResidenceSaveMask.Music) != 0)
+                    {
+                        model.MusicId = Music;
+                        entity.Property(p => p.MusicId).IsModified = true;
                     }
                     if ((saveMask & ResidenceSaveMask.Sky) != 0)
                     {

@@ -63,6 +63,17 @@ namespace NexusForever.WorldServer.Game.Housing
 
         private float scale;
 
+        public ulong DecorParentId
+        {
+            get => decorParentId;
+            set
+            {
+                decorParentId = value;
+                saveMask |= DecorSaveMask.DecorParentId;
+            }
+        }
+        private ulong decorParentId;
+
         public ushort ColourShiftId
         {
             get => colourShiftId;
@@ -89,6 +100,7 @@ namespace NexusForever.WorldServer.Game.Housing
             position = new Vector3(model.X, model.Y, model.Z);
             rotation = new Quaternion(model.Qx, model.Qy, model.Qz, model.Qw);
             scale    = model.Scale;
+            decorParentId = model.DecorParentId;
             colourShiftId = model.ColourShiftId;
 
             saveMask = DecorSaveMask.None;
@@ -139,6 +151,7 @@ namespace NexusForever.WorldServer.Game.Housing
                     Qz          = Rotation.Z,
                     Qw          = Rotation.W,
                     Scale       = Scale,
+                    DecorParentId = DecorParentId,
                     ColourShiftId = ColourShiftId
                 });
             }
@@ -192,6 +205,11 @@ namespace NexusForever.WorldServer.Game.Housing
                 {
                     model.Scale = Scale;
                     entity.Property(p => p.Scale).IsModified = true;
+                }
+                if ((saveMask & DecorSaveMask.DecorParentId) != 0)
+                {
+                    model.DecorParentId = DecorParentId;
+                    entity.Property(p => p.DecorParentId).IsModified = true;
                 }
                 if ((saveMask & DecorSaveMask.ColourShiftId) != 0)
                 {
