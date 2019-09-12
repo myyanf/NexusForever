@@ -16,6 +16,7 @@ namespace NexusForever.WorldServer.Database.Character.Model
             CharacterCustomisation = new HashSet<CharacterCustomisation>();
             CharacterDatacube = new HashSet<CharacterDatacube>();
             CharacterKeybinding = new HashSet<CharacterKeybinding>();
+            Contacts = new HashSet<Contacts>();
             CharacterMail = new HashSet<CharacterMail>();
             CharacterPath = new HashSet<CharacterPath>();
             CharacterPetCustomisation = new HashSet<CharacterPetCustomisation>();
@@ -51,6 +52,7 @@ namespace NexusForever.WorldServer.Database.Character.Model
         public byte InnateIndex { get; set; }
         public uint TimePlayedTotal { get; set; }
         public uint TimePlayedLevel { get; set; }
+        public uint TotalXp { get; set; }
         public DateTime? DeleteTime { get; set; }
         public string OriginalName { get; set; }
 
@@ -64,6 +66,7 @@ namespace NexusForever.WorldServer.Database.Character.Model
         public virtual ICollection<CharacterCustomisation> CharacterCustomisation { get; set; }
         public virtual ICollection<CharacterDatacube> CharacterDatacube { get; set; }
         public virtual ICollection<CharacterKeybinding> CharacterKeybinding { get; set; }
+        public virtual ICollection<Contacts> Contacts { get; set; }
         public virtual ICollection<CharacterMail> CharacterMail { get; set; }
         public virtual ICollection<CharacterPath> CharacterPath { get; set; }
         public virtual ICollection<CharacterPetCustomisation> CharacterPetCustomisation { get; set; }

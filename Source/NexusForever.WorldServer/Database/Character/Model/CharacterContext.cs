@@ -1,9 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using NexusForever.Shared;
-using NexusForever.Shared.Configuration;
-using NexusForever.Shared.Database;
 
 namespace NexusForever.WorldServer.Database.Character.Model
 {
@@ -29,6 +26,7 @@ namespace NexusForever.WorldServer.Database.Character.Model
         public virtual DbSet<CharacterCustomisation> CharacterCustomisation { get; set; }
         public virtual DbSet<CharacterDatacube> CharacterDatacube { get; set; }
         public virtual DbSet<CharacterKeybinding> CharacterKeybinding { get; set; }
+        public virtual DbSet<Contacts> Contacts { get; set; }
         public virtual DbSet<CharacterMail> CharacterMail { get; set; }
         public virtual DbSet<CharacterMailAttachment> CharacterMailAttachment { get; set; }
         public virtual DbSet<CharacterPath> CharacterPath { get; set; }
@@ -48,7 +46,10 @@ namespace NexusForever.WorldServer.Database.Character.Model
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-                optionsBuilder.UseConfiguration(DatabaseManager.Config, DatabaseType.Character);
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySql("server=localhost;port=3306;user=nexusforever;password=nexusforever;database=nexus_forever_character");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -159,6 +160,10 @@ namespace NexusForever.WorldServer.Database.Character.Model
 
                 entity.Property(e => e.WorldId)
                     .HasColumnName("worldId")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.TotalXp)
+                    .HasColumnName("totalXp")
                     .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.WorldZoneId)
@@ -946,6 +951,10 @@ namespace NexusForever.WorldServer.Database.Character.Model
                     .HasColumnName("groundWallpaperId")
                     .HasDefaultValueSql("'0'");
 
+                entity.Property(e => e.MusicId)
+                    .HasColumnName("musicId")
+                    .HasDefaultValueSql("'0'");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("name")
@@ -993,9 +1002,6 @@ namespace NexusForever.WorldServer.Database.Character.Model
 
                 entity.ToTable("residence_decor");
 
-                entity.HasIndex(e => e.DecorId)
-                    .HasName("FK_residence_decor_item");
-
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("'0'");
@@ -1004,8 +1010,16 @@ namespace NexusForever.WorldServer.Database.Character.Model
                     .HasColumnName("decorId")
                     .HasDefaultValueSql("'0'");
 
+                entity.Property(e => e.ColourShiftId)
+                    .HasColumnName("colourShiftId")
+                    .HasDefaultValueSql("'0'");
+
                 entity.Property(e => e.DecorInfoId)
                     .HasColumnName("decorInfoId")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.DecorParentId)
+                    .HasColumnName("decorParentId")
                     .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.DecorType)
@@ -1030,10 +1044,6 @@ namespace NexusForever.WorldServer.Database.Character.Model
 
                 entity.Property(e => e.Scale)
                     .HasColumnName("scale")
-                    .HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.ColourShiftId)
-                    .HasColumnName("colourShiftId")
                     .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.X)
@@ -1089,6 +1099,55 @@ namespace NexusForever.WorldServer.Database.Character.Model
                     .WithMany(p => p.ResidencePlot)
                     .HasForeignKey(d => d.Id)
                     .HasConstraintName("FK__residence_plot_id__residence_id");
+            });
+
+
+            modelBuilder.Entity<Contacts>(entity =>
+            {
+                entity.HasKey(e => new { e.Id, e.OwnerId, e.ContactId })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("contacts");
+
+                entity.Property(e => e.Accepted)
+                    .HasColumnName("accepted")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.ContactId)
+                    .HasColumnName("contactId")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.InviteMessage)
+                    .HasColumnName("inviteMessage")
+                    .HasColumnType("varchar(100)")
+                    .HasDefaultValueSql("''");
+
+                entity.Property(e => e.OwnerId)
+                    .HasColumnName("ownerId")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.PrivateNote)
+                    .HasColumnName("privateNote")
+                    .HasColumnType("varchar(100)")
+                    .HasDefaultValueSql("''");
+
+                entity.Property(e => e.RequestTime)
+                    .HasColumnName("requestTime")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("'CURRENT_TIMESTAMP'");
+
+                entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .HasDefaultValueSql("'0'");
+
+                entity.HasOne(d => d.IdNavigation)
+                    .WithMany(p => p.Contacts)
+                    .HasForeignKey(d => d.OwnerId)
+                    .HasConstraintName("FK__contacts_ownerId__character_id");
             });
         }
     }

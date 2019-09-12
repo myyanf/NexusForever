@@ -3,24 +3,26 @@ using NexusForever.Shared.Network;
 using NexusForever.Shared.Network.Message;
 using NexusForever.WorldServer.Game.Social;
 using NexusForever.WorldServer.Network.Message.Model.Shared;
-using System;
 
 namespace NexusForever.WorldServer.Network.Message.Model
 {
-    [Message(GameMessageOpcode.ClientChat)]
-    public class ClientChat : IReadable
+    [Message(GameMessageOpcode.ClientChatWhisper)]
+    public class ClientChatWhisper : IReadable
     {
-        public ChatChannel Channel { get; private set; }
-        public ulong Unknown0 { get; set; }
+        public string PlayerName { get; private set; }
+        public string Unknown0 { get; private set; }
+
         public string Message { get; private set; }
         public List<ChatFormat> Formats { get; } = new List<ChatFormat>();
 
+        public bool Unknown1 { get; set; }
+
         public void Read(GamePacketReader reader)
         {
-            Channel  = reader.ReadEnum<ChatChannel>(14u);
-            Unknown0 = reader.ReadULong();
-            Message  = reader.ReadWideString();
+            PlayerName = reader.ReadWideString();
+            Unknown0 = reader.ReadWideString();
 
+            Message = reader.ReadWideString();
             byte formatCount = reader.ReadByte(5u);
             for (int i = 0; i < formatCount; i++)
             {
@@ -28,6 +30,8 @@ namespace NexusForever.WorldServer.Network.Message.Model
                 format.Read(reader);
                 Formats.Add(format);
             }
+
+            Unknown1 = reader.ReadBit();
         }
     }
 }

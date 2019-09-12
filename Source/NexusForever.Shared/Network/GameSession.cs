@@ -154,7 +154,9 @@ namespace NexusForever.Shared.Network
             IReadable message = MessageManager.GetMessage(packet.Opcode);
             if (message == null)
             {
+                string bleh = String.Join(", ", packet.Data);
                 log.Warn($"Received unknown packet {packet.Opcode:X}");
+                log.Warn($"packet data: {bleh}");
                 return;
             }
 
