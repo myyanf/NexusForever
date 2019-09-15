@@ -81,11 +81,6 @@ namespace NexusForever.WorldServer.Network.Message.Handler
         public static void HandleRandomRoll(WorldSession session, RandomRollCommand randomRoll)
         {
             
-            Console.WriteLine($"{session.Player.Name}");
-            Console.WriteLine($"CharacterId: {session.Player.CharacterId}");
-            Console.WriteLine($"realRealmID: {WorldServer.RealmId}  MinRandom: {randomRoll.MinRandom} MaxRandom: {randomRoll.MaxRandom}");
-            Console.WriteLine($"Unknown0: {randomRoll.realmId} U1: {randomRoll.characterId} Bytes: {randomRoll.Unknown0} {randomRoll.Unknown1} {randomRoll.Unknown2} {randomRoll.Unknown3}");
-            Console.WriteLine($"Random Out: {randomRoll.RandomOut}");
             session.Player.EnqueueToVisible(new RandomRollResponse
             {
                 realmId = WorldServer.RealmId,
@@ -101,7 +96,7 @@ namespace NexusForever.WorldServer.Network.Message.Handler
                 characterId = session.Player.CharacterId,
                 MinRandom = randomRoll.MinRandom,
                 MaxRandom = randomRoll.MaxRandom,
-                RandomIn = randomRoll.RandomOut
+                
             });
             /*  session.EnqueueEvent(new TaskGenericEvent<Character>(CharacterDatabase.GetCharacterById(randomRoll.Identity.CharacterId),
              character =>
