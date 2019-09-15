@@ -61,13 +61,17 @@ namespace NexusForever.Shared.Network
                 writer.Write(opcode, 16);
                 message.Write(writer);
                 writer.FlushBits();
-
+                
                 byte[] data      = stream.ToArray();
+
+                string bleh = String.Join(", ", data);
+                log.Warn($"Sent packet {opcode}(0x{opcode:X} data {bleh}).");
+
                 byte[] encrypted = encryption.Encrypt(data, data.Length);
                 EnqueueMessage(BuildEncryptedMessage(encrypted));
             }
-
-            log.Trace($"Sent packet {opcode}(0x{opcode:X}).");
+            
+            log.Warn($"Sent packet {opcode}(0x{opcode:X}).");
         }
 
         [Conditional("DEBUG")]
@@ -77,11 +81,23 @@ namespace NexusForever.Shared.Network
             using (var writer = new GamePacketWriter(stream))
             {
                 writer.Write(opcode, 16);
+                log.Warn($"opcode {opcode}");
+                if ((GameMessageOpcode)opcode == GameMessageOpcode.RandomRollResponse )
+                {
+                   log.Warn($"Hex message enqueued is {hex}");
+                }
                 
                 byte[] body = Enumerable.Range(0, hex.Length)
                     .Where(x => x % 2 == 0)
                     .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                     .ToArray();
+
+                if((GameMessageOpcode)opcode == GameMessageOpcode.RandomRollResponse)
+                {
+                    string bleh = String.Join(", ", body);
+                    log.Warn($"bytes message enqueued is {hex}");
+                }
+
                 writer.WriteBytes(body);
                 
                 writer.FlushBits();
@@ -152,6 +168,19 @@ namespace NexusForever.Shared.Network
         protected void HandlePacket(ClientGamePacket packet)
         {
             IReadable message = MessageManager.GetMessage(packet.Opcode);
+
+            if (packet.Opcode == GameMessageOpcode.ClientNeighborRequestAdd)
+            {
+                string bleh = String.Join(", ", packet.Data);
+                log.Warn($"NeighborAdd packet data: {bleh}");
+            }
+
+            if (packet.Opcode == GameMessageOpcode.RandomRollCommand)
+            {
+                string bleh = String.Join(", ", packet.Data);
+                log.Warn($"RandomRoll packet data: {bleh}");
+            }
+
             if (message == null)
             {
                 string bleh = String.Join(", ", packet.Data);
@@ -159,6 +188,8 @@ namespace NexusForever.Shared.Network
                 log.Warn($"packet data: {bleh}");
                 return;
             }
+
+            
 
             MessageHandlerDelegate handlerInfo = MessageManager.GetMessageHandler(packet.Opcode);
             if (handlerInfo == null)

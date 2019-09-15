@@ -22,27 +22,30 @@ namespace NexusForever.WorldServer.Network.Message.Model
     {
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
 
-        public ushort Unknown0 { get; set; }
-        public byte Unknown4 { get; set; }
-        public byte Unknown5 { get; set; }
-        public ulong Unknown1 { get; set; }
-        public ushort ChatChannel { get; set; }
-        public ushort Unknown3 { get; set; }
+        // Note that for /roll on the command line, the first two fields below,
+        // realmId, characterId, and Unknown0-3 are 0.
+        public ushort realmId { get; set; }
+        public ulong characterId { get; set; }
+        public int MinRandom { get; set; }
         public int MaxRandom { get; set; }
-        public ulong Unknown2 { get; set; }
+        public byte Unknown0 { get; set; }
+        public byte Unknown1 { get; set; }
+        public byte Unknown2 { get; set; }
+        public byte Unknown3 { get; set; }
         public int RandomOut { get; set; }
         public Random rnd = new Random();
 
         public void Read(GamePacketReader reader)
         {
-            Unknown0 = reader.ReadUShort(12u);
-            Unknown1 = reader.ReadULong();
-            ChatChannel = reader.ReadUShort(14u);
-            Unknown4 = reader.ReadByte(4u);
-            Unknown3 = reader.ReadUShort();
+            realmId = reader.ReadUShort(14u);
+            characterId = reader.ReadULong();
+            MinRandom = reader.ReadInt();
             MaxRandom = reader.ReadInt();
-            Unknown2 = reader.ReadULong();
-            RandomOut = rnd.Next(MaxRandom);
+            Unknown0 = reader.ReadByte();
+            Unknown1 = reader.ReadByte();
+            Unknown2 = reader.ReadByte();
+            Unknown3 = reader.ReadByte();
+            RandomOut = rnd.Next(MinRandom,MaxRandom);
         }
 
     }

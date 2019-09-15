@@ -80,19 +80,27 @@ namespace NexusForever.WorldServer.Network.Message.Handler
         [MessageHandler(GameMessageOpcode.RandomRollCommand)]
         public static void HandleRandomRoll(WorldSession session, RandomRollCommand randomRoll)
         {
+            
             Console.WriteLine($"{session.Player.Name}");
             Console.WriteLine($"CharacterId: {session.Player.CharacterId}");
-            Console.WriteLine($"realRealmID: {WorldServer.RealmId}  ChatChannel: {randomRoll.ChatChannel} MaxRandom: {randomRoll.MaxRandom}");
-            Console.WriteLine($"Unknown0: {randomRoll.Unknown0} U1: {randomRoll.Unknown1} U2: {randomRoll.Unknown2} U3: {randomRoll.Unknown3} U4: {randomRoll.Unknown4}");
+            Console.WriteLine($"realRealmID: {WorldServer.RealmId}  MinRandom: {randomRoll.MinRandom} MaxRandom: {randomRoll.MaxRandom}");
+            Console.WriteLine($"Unknown0: {randomRoll.realmId} U1: {randomRoll.characterId} Bytes: {randomRoll.Unknown0} {randomRoll.Unknown1} {randomRoll.Unknown2} {randomRoll.Unknown3}");
             Console.WriteLine($"Random Out: {randomRoll.RandomOut}");
-            Console.WriteLine($"GUID: {session.Player.Guid}");
-            Console.WriteLine($"{session.Player.CharacterId}{WorldServer.RealmId}{randomRoll.ChatChannel}{randomRoll.MaxRandom}{randomRoll.RandomOut}");
+            session.Player.EnqueueToVisible(new RandomRollResponse
+            {
+                realmId = WorldServer.RealmId,
+                characterId = session.Player.CharacterId,
+                MinRandom = randomRoll.MinRandom,
+                MaxRandom = randomRoll.MaxRandom,
+                RandomRollResult = randomRoll.rnd.Next(randomRoll.MinRandom, randomRoll.MaxRandom)
+        });
+
             session.EnqueueMessageEncrypted(new RandomRollResponse
             {
-                characterId = session.Player.CharacterId,
                 realmId = WorldServer.RealmId,
+                characterId = session.Player.CharacterId,
+                MinRandom = randomRoll.MinRandom,
                 MaxRandom = randomRoll.MaxRandom,
-                ChatChannel = randomRoll.ChatChannel,
                 RandomIn = randomRoll.RandomOut
             });
             /*  session.EnqueueEvent(new TaskGenericEvent<Character>(CharacterDatabase.GetCharacterById(randomRoll.Identity.CharacterId),

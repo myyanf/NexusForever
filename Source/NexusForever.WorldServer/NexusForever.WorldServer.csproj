@@ -34,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Game\Misc\" />
     <Folder Include="Web\Controllers\" />
   </ItemGroup>
 

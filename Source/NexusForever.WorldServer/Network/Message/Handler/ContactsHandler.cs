@@ -110,5 +110,30 @@ namespace NexusForever.WorldServer.Network.Message.Handler
         //        Unknown2 = new byte[] { 18, 5, 0, 0 }
         //    });
         //}
+
+
+        [MessageHandler(GameMessageOpcode.ClientNeighborRequestAdd)]
+        public static void HandleNeighborRequestAdd(WorldSession session, ClientNeighborRequestAdd request)
+        {
+            Console.WriteLine($" {request.Unknown1} {request.Unknown2}  name: {request.PlayerName} U0: {request.Unknown0} Type: request.Type Message: request.Message ");
+            if (request.PlayerName == session.Player.Name)
+            {
+                ContactManager.SendContactsResult(session, ContactResult.CannotInviteSelf);
+                return;
+            }
+
+            session.EnqueueEvent(new TaskGenericEvent<Character>(CharacterDatabase.GetCharacterByName(request.PlayerName),
+                character =>
+                {
+                    Console.WriteLine($" {request.Unknown1} {request.Unknown2} name: {request.PlayerName} U0: {request.Unknown0} Type: request.Type Message: request.Message ");
+                    if (character != null)
+                    {
+                      //  ContactManager.CreateNeighborRequest(session, character.Id);
+                        return;
+                    }
+                    else
+                        ContactManager.SendContactsResult(session, ContactResult.PlayerNotFound);
+                }));
+        }
     }
 }
