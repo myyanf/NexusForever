@@ -292,7 +292,7 @@ namespace NexusForever.WorldServer.Game.Map
                 if (update.Scale < 0f)
                     throw new InvalidPacketValueException();
 
-                // new decor is being placed directly in the worldz
+                // new decor is being placed directly in the world
                 decor.Position = update.Position;
                 decor.Rotation = update.Rotation;
                 decor.Scale    = update.Scale;
